@@ -1,0 +1,11 @@
+.editorconfig
+
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+test/
+console1.png
+console2.png
+example.gif

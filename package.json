@@ -1,0 +1,12 @@
+{
+  "name": "recoil-persist",
+  "version": "0.1.0",
+  "description": "Package for recoil to persist and rehydrate a redux store",
+  "main": "index.js",
+  "repository": "git@github.com:polemius/recoil-persist.git",
+  "author": "Ivan Menshykov <ivan.menshykov@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "recoil": "^0.0.7"
+  }
+}
