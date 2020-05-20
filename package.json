@@ -6,7 +6,20 @@
   "repository": "git@github.com:polemius/recoil-persist.git",
   "author": "Ivan Menshykov <ivan.menshykov@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json)\"",
+    "lint": "eslint --ignore-path .gitignore .",
+    "format": "yarn prettier -- --write",
+    "check-format": "yarn prettier -- --list-different"
+  },
   "devDependencies": {
+    "clean-publish": "^1.1.7",
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-react": "^7.20.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.4",
+    "prettier": "^2.0.5",
     "recoil": "^0.0.7"
   }
 }
