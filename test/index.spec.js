@@ -1,7 +1,9 @@
 import React from 'react'
-import { updateState, RecoilPersist } from '..'
+import recoilPersist from '..'
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as recoil from 'recoil'
+
+const { updateState, RecoilPersist } = recoilPersist()
 
 const counterState = recoil.atom({
   key: 'count',
@@ -11,19 +13,29 @@ const counterState = recoil.atom({
   },
 })
 
+const counter2State = recoil.atom({
+  key: 'count2',
+  default: 0,
+  persistence_UNSTABLE: {
+    type: 'log',
+  },
+})
+
 function Demo() {
   const [count, setCount] = recoil.useRecoilState(counterState)
+  const [count2, setCount2] = recoil.useRecoilState(counter2State)
   return (
     <div>
       <p data-testid="count-value">{count}</p>
       <button onClick={() => setCount(count + 1)}>Increase</button>
+      <button onClick={() => setCount2(count2 + 1)}>Increase 2</button>
     </div>
   )
 }
 
 afterEach(() => {
   localStorage.clear()
-  jest.restoreAllMocks()
+  sessionStorage.clear()
 })
 
 it('should update localStorage', async () => {
@@ -35,6 +47,43 @@ it('should update localStorage', async () => {
   )
 
   fireEvent.click(getByText('Increase'))
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+  expect(JSON.parse(localStorage.getItem('recoil-persist'))).toStrictEqual({
+    count: 1,
+  })
+  expect(sessionStorage.getItem('recoil-persist')).toBeNull()
+})
+
+it('should update sessionStorage', async () => {
+  const { updateState, RecoilPersist } = recoilPersist([], {
+    storage: sessionStorage,
+  })
+  const { getByText, getByTestId } = render(
+    <recoil.RecoilRoot initializeState={updateState}>
+      <RecoilPersist />
+      <Demo />
+    </recoil.RecoilRoot>,
+  )
+
+  fireEvent.click(getByText('Increase'))
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+  expect(JSON.parse(sessionStorage.getItem('recoil-persist'))).toStrictEqual({
+    count: 1,
+  })
+  expect(localStorage.getItem('recoil-persist')).toBeNull()
+})
+
+it('should update the localStorage only white listed names', async () => {
+  const { updateState, RecoilPersist } = recoilPersist(['count'])
+  const { getByText, getByTestId } = render(
+    <recoil.RecoilRoot initializeState={updateState}>
+      <RecoilPersist />
+      <Demo />
+    </recoil.RecoilRoot>,
+  )
+
+  fireEvent.click(getByText('Increase'))
+  fireEvent.click(getByText('Increase 2'))
   await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
   expect(JSON.parse(localStorage.getItem('recoil-persist'))).toStrictEqual({
     count: 1,
@@ -52,4 +101,34 @@ it('should read state from localStorage', async () => {
   )
 
   expect(getByTestId('count-value').innerHTML).toBe('1')
+})
+
+it('should hande non jsonable object in localStorage', async () => {
+  localStorage.setItem('recoil-persist', 'test string')
+
+  const { getByTestId } = render(
+    <recoil.RecoilRoot initializeState={updateState}>
+      <RecoilPersist />
+      <Demo />
+    </recoil.RecoilRoot>,
+  )
+
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('0'))
+})
+
+it('should handle non jsonable object in state', async () => {
+  let mock = jest.spyOn(JSON, 'stringify').mockImplementation(() => {
+    throw Error('mock error')
+  })
+
+  const { getByText, getByTestId } = render(
+    <recoil.RecoilRoot initializeState={updateState}>
+      <RecoilPersist />
+      <Demo />
+    </recoil.RecoilRoot>,
+  )
+
+  fireEvent.click(getByText('Increase'))
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+  expect(mock).toHaveBeenCalledTimes(1)
 })

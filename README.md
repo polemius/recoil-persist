@@ -7,7 +7,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import { RecoilRoot } from 'recoil'
-import { updateState, RecoilPersist } from 'recoil-logger'
+import recoilPersist from 'recoil-persist'
+
+const { RecoilPersist, updateState } = recoilPersist()
 
 ReactDOM.render(
   <React.StrictMode>
@@ -39,7 +41,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from "recoil";
-+ import { updateState, RecoilPersist } from 'recoil-logger'
++import recoilPersist from 'recoil-persist'
+
++const { RecoilPersist, updateState } = recoilPersist()
 
 ReactDOM.render(
   <React.StrictMode>
@@ -74,7 +78,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from "recoil";
-import { updateState, RecoilPersist } from 'recoil-logger'
+import recoilPersist from 'recoil-persist'
+
+const { RecoilPersist, updateState } = recoilPersist(
+    ['count'], // configurate that atoms will be stored (if empty then all atoms will be stored),
+    {
+        key: 'recoil-persist', // this key is using to store data in local storage
+        storage: localStorage // configurate which stroage will be used to store the data
+    }
+)
 
 ReactDOM.render(
   <React.StrictMode>
@@ -90,7 +102,44 @@ ReactDOM.render(
 );
 ```
 
+## API
+
+### recoilPersist(paths, config)
+
+#### paths parameter
+
+```js
+type paths = Void | Array<String>
+```
+
+If no value is provided to `paths`, then `recoilPersist` stores everything in storage.
+
+#### config parameter
+
+```js
+type config.key = String
+```
+
+Default value of `config.key` is `recoil-persist`. This key is using to store data in storage.
+
+```js
+type config.storage = Storage
+```
+
+Set `config.storage` with `sessionStorage` or other `Storage` implementation to change storage target. Otherwise `localStorage` is used (default).
+
 ## Notes
 
 This package use unstable hook `useTransactionObservation_UNSTABLE`. 
 As far it will be stable the package will be updated with new API.
+
+## Demo
+
+```
+$ git clone git@github.com:polemius/recoil-persist.git
+$ cd recoil-persist
+$ npm install
+$ npm run start
+```
+
+Please open [localhost:1234](http://localhost:1234).

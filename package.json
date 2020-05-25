@@ -12,9 +12,11 @@
     "format": "yarn prettier -- --write",
     "check-format": "yarn prettier -- --list-different",
     "test": "jest",
-    "validate": "yarn lint && yarn check-format && yarn test"
+    "validate": "yarn lint && yarn check-format && yarn test",
+    "start": "parcel serve --cache-dir test/demo/.cache -d test/demo/dist test/demo/index.html --open"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.6",
     "@babel/plugin-transform-modules-commonjs": "^7.9.6",
     "@babel/plugin-transform-runtime": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
@@ -29,6 +31,7 @@
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "lint-staged": "^10.2.4",
+    "parcel-bundler": "^1.12.4",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

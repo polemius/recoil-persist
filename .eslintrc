@@ -13,7 +13,8 @@
     "eslint-config-prettier"
   ],
   "rules": {
-    "strict": ["error", "never"]
+    "strict": ["error", "never"],
+    "no-empty": "off"
   },
   "env": {
     "browser": true,
