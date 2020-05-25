@@ -1,17 +1,5 @@
 import { useTransactionObservation_UNSTABLE } from 'recoil'
 
-const filterAtoms = (state, paths) => {
-  let filteredState = {}
-  for (let key in state) {
-    for (let condition of paths) {
-      if ((condition.test && condition.test(key)) || condition === key) {
-        filteredState[key] = state[key]
-      }
-    }
-  }
-  return filteredState
-}
-
 /**
  * Recoil module to persist state to passed storage (it use localStorage by default)
  *
