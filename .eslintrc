@@ -9,13 +9,15 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
+    "plugin:jest/recommended",
     "eslint-config-prettier"
   ],
   "rules": {
     "strict": ["error", "never"]
   },
   "env": {
-    "browser": true
+    "browser": true,
+    "node": true
   },
   "settings": {
     "react": {
