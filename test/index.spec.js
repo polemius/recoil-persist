@@ -36,6 +36,7 @@ function Demo() {
 afterEach(() => {
   localStorage.clear()
   sessionStorage.clear()
+  jest.restoreAllMocks()
 })
 
 it('should update localStorage', async () => {
@@ -131,4 +132,22 @@ it('should handle non jsonable object in state', async () => {
   fireEvent.click(getByText('Increase'))
   await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
   expect(mock).toHaveBeenCalledTimes(1)
+})
+
+it('should  handle non existing atom name stored in storage', async () => {
+  localStorage.setItem(
+    'recoil-persist',
+    JSON.stringify({
+      notExist: 'test value',
+    }),
+  )
+
+  const { getByTestId } = render(
+    <recoil.RecoilRoot initializeState={updateState}>
+      <RecoilPersist />
+      <Demo />
+    </recoil.RecoilRoot>,
+  )
+
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('0'))
 })

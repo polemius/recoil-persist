@@ -45,7 +45,9 @@ export function recoilPersist(paths = [], config = {}) {
     }
     Object.keys(state).forEach((key) => {
       if (paths.length === 0 || paths.includes(key)) {
-        set({ key }, state[key])
+        try {
+          set({ key }, state[key])
+        } catch (e) {}
       }
     })
   }
