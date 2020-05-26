@@ -1,6 +1,6 @@
 # Recoil Persist
 
-Tiny module for [recoil](https://recoiljs.org) to store and sync state to `localStorage`.
+Tiny module for [recoil](https://recoiljs.org) to store and sync state to `Storage`.
 
 ![Example of persist state in localStorage](example.gif)
 
