@@ -2,6 +2,8 @@
 
 Tiny module for [recoil](https://recoiljs.org) to store and sync state to `localStorage`.
 
+![Example of persist state in localStorage](example.gif)
+
 ```js
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -101,6 +103,8 @@ ReactDOM.render(
   document.getElementById('root')
 );
 ```
+
+![Example of persist state in localStorage](example.png)
 
 ## API
 

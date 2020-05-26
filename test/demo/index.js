@@ -26,10 +26,10 @@ export default function App() {
   const [count2, setCount2] = useRecoilState(counterState2)
   return (
     <div className="App">
-      <h1>Counter 1 (persist): {count}</h1>
+      <h3>Counter 1 (persist): {count}</h3>
       <button onClick={() => setCount(count + 1)}>Increase</button>
       <button onClick={() => setCount(count - 1)}>Decrease</button>
-      <h1>Counter 2 (not persist): {count2}</h1>
+      <h3>Counter 2 (not persist): {count2}</h3>
       <button onClick={() => setCount2(count2 + 1)}>Increase</button>
       <button onClick={() => setCount2(count2 - 1)}>Decrease</button>
     </div>
