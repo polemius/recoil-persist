@@ -1,6 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.6.0
+
+* Add keywords to package.json.
+* Update dependencies.
+
 ## 0.5.1
 
 * Update npmignore.
