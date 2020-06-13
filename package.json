@@ -6,6 +6,12 @@
   "repository": "polemius/recoil-persist",
   "author": "Ivan Menshykov <ivan.menshykov@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "state",
+    "react",
+    "recoil",
+    "store"
+  ],
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json)\"",
     "lint": "eslint --ignore-path .gitignore .",
