@@ -22,7 +22,8 @@ export function recoilPersist(paths = [], config = {}) {
 
   function persistState(event) {
     const toStore = {}
-    event.atomValues.forEach((value, name) => {
+    event.atomValues.forEach((value, atomName) => {
+      const name = atomName.split('__')[0]
       if (paths.length === 0 || paths.includes(name)) {
         toStore[name] = value
       }
