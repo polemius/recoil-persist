@@ -1,6 +1,6 @@
 {
   "name": "recoil-persist",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Package for recoil to persist and rehydrate store",
   "main": "index.js",
   "repository": "polemius/recoil-persist",

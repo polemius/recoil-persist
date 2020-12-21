@@ -1,6 +1,11 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.8.0
+
+* Fixing Nextjs Incompatibility (#9). Thanks https://github.com/dimaip 
+* Update dependencies.
+
 ## 0.7.0
 
 * Fix saving and updating values from atoms created using atomFamily.
