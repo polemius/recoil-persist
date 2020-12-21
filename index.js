@@ -12,6 +12,10 @@ import { useTransactionObservation_UNSTABLE } from 'recoil'
  *    `localStorage`. Defaults value is `localStorage`.
  */
 export function recoilPersist(paths = [], config = {}) {
+  if (typeof window === 'undefined') {
+    return { RecoilPersist: () => null, updateState: () => {} }
+  }
+  
   const key = config.key || 'recoil-persist'
   const storage = config.storage || localStorage
 
