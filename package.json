@@ -3,6 +3,7 @@
   "version": "0.8.0",
   "description": "Package for recoil to persist and rehydrate store",
   "main": "index.js",
+  "type": "module",
   "repository": "polemius/recoil-persist",
   "author": "Ivan Menshykov <ivan.menshykov@gmail.com>",
   "license": "MIT",
