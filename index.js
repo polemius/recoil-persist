@@ -15,7 +15,7 @@ export function recoilPersist(paths = [], config = {}) {
   if (typeof window === 'undefined') {
     return { RecoilPersist: () => null, updateState: () => {} }
   }
-  
+
   const key = config.key || 'recoil-persist'
   const storage = config.storage || localStorage
 
@@ -34,7 +34,9 @@ export function recoilPersist(paths = [], config = {}) {
     })
     try {
       storage.setItem(key, JSON.stringify(toStore))
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   function updateState({ set }) {
@@ -43,6 +45,7 @@ export function recoilPersist(paths = [], config = {}) {
     try {
       state = JSON.parse(toParse)
     } catch (e) {
+      console.error(e)
       return
     }
     if (state === null) {
@@ -52,7 +55,9 @@ export function recoilPersist(paths = [], config = {}) {
       if (paths.length === 0 || paths.includes(key)) {
         try {
           set({ key }, state[key])
-        } catch (e) {}
+        } catch (e) {
+          console.error(e)
+        }
       }
     })
   }
