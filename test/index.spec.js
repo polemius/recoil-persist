@@ -1,5 +1,5 @@
 import React from 'react'
-import recoilPersist from '..'
+import { recoilPersist } from '..'
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as recoil from 'recoil'
 

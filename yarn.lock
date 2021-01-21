@@ -3875,6 +3875,17 @@ dotenv@^5.0.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
   integrity sha512-4As8uPrjfwb7VXC+WnLCbXK7y+Ueb2B3zgNCePYfhxS1PYeaO1YTeplffTEcbfLhvFNGLAz90VvJs9yomG7bow==
 
+dual-publish@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/dual-publish/-/dual-publish-1.0.3.tgz#a6a01dd2c4caf2e3a25b4bf7aa300faf08fda789"
+  integrity sha512-3KzfMgRflIFF0l9gqUZRLEyFvfKPNos2KEaxdOV2GbBdPyzCJJG5jPKJC/Dd26XWd3KgagXHUSdKdMm7ZyMu/Q==
+  dependencies:
+    clean-publish "^1.1.8"
+    colorette "^1.2.1"
+    globby "^11.0.1"
+    line-column "^1.0.2"
+    rimraf "^3.0.2"
+
 duplexer2@~0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer2/-/duplexer2-0.1.4.tgz#8b12dab878c0d69e3e7891051662a32fc6bddcc1"
@@ -6078,6 +6089,14 @@ levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+line-column@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/line-column/-/line-column-1.0.2.tgz#d25af2936b6f4849172b312e4792d1d987bc34a2"
+  integrity sha1-0lryk2tvSEkXKzEuR5LR2Ye8NKI=
+  dependencies:
+    isarray "^1.0.0"
+    isobject "^2.0.0"
 
 lines-and-columns@^1.1.6:
   version "1.1.6"

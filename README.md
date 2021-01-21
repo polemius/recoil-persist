@@ -1,6 +1,7 @@
 # Recoil Persist
 
-Tiny module for [recoil](https://recoiljs.org) to store and sync state to `Storage`.
+Tiny module for [recoil](https://recoiljs.org) to store and sync state to
+`Storage`.
 
 ![Example of persist state in localStorage](example.gif)
 
@@ -9,7 +10,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import { RecoilRoot } from 'recoil'
-import recoilPersist from 'recoil-persist'
+import { recoilPersist } from 'recoil-persist'
 
 const { RecoilPersist, updateState } = recoilPersist()
 
@@ -43,7 +44,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from "recoil";
-+import recoilPersist from 'recoil-persist'
++import { recoilPersist } from 'recoil-persist'
 
 +const { RecoilPersist, updateState } = recoilPersist()
 
@@ -80,7 +81,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { RecoilRoot } from "recoil";
-import recoilPersist from 'recoil-persist'
+import { recoilPersist } from 'recoil-persist'
 
 const { RecoilPersist, updateState } = recoilPersist(
     ['count'], // configurate that atoms will be stored (if empty then all atoms will be stored),
@@ -116,7 +117,8 @@ ReactDOM.render(
 type paths = Void | Array<String>
 ```
 
-If no value is provided to `paths`, then `recoilPersist` stores everything in storage.
+If no value is provided to `paths`, then `recoilPersist` stores everything in
+storage.
 
 #### config parameter
 
@@ -124,18 +126,20 @@ If no value is provided to `paths`, then `recoilPersist` stores everything in st
 type config.key = String
 ```
 
-Default value of `config.key` is `recoil-persist`. This key is using to store data in storage.
+Default value of `config.key` is `recoil-persist`. This key is using to store
+data in storage.
 
 ```js
 type config.storage = Storage
 ```
 
-Set `config.storage` with `sessionStorage` or other `Storage` implementation to change storage target. Otherwise `localStorage` is used (default).
+Set `config.storage` with `sessionStorage` or other `Storage` implementation to
+change storage target. Otherwise `localStorage` is used (default).
 
 ## Notes
 
-This package use unstable hook `useTransactionObservation_UNSTABLE`. 
-As far it will be stable the package will be updated with new API.
+This package use unstable hook `useTransactionObservation_UNSTABLE`. As far it
+will be stable the package will be updated with new API.
 
 ## Demo
 

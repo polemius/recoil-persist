@@ -30,6 +30,7 @@
     "@testing-library/react": "^11.2.3",
     "babel-jest": "^26.6.3",
     "clean-publish": "^1.1.8",
+    "dual-publish": "^1.0.3",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-jest": "^24.1.3",

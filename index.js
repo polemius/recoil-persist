@@ -1,4 +1,4 @@
-import { useTransactionObservation_UNSTABLE } from 'recoil'
+const { useTransactionObservation_UNSTABLE } = require('recoil')
 
 /**
  * Recoil module to persist state to passed storage (it use localStorage by default)
@@ -11,7 +11,7 @@ import { useTransactionObservation_UNSTABLE } from 'recoil'
  * @param {Storage} [config.storage] Can be set as `sessionStorage` or
  *    `localStorage`. Defaults value is `localStorage`.
  */
-export function recoilPersist(paths = [], config = {}) {
+function recoilPersist(paths = [], config = {}) {
   if (typeof window === 'undefined') {
     return { RecoilPersist: () => null, updateState: () => {} }
   }
@@ -65,4 +65,4 @@ export function recoilPersist(paths = [], config = {}) {
   return { RecoilPersist, updateState }
 }
 
-export default recoilPersist
+module.exports = { recoilPersist }

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { atom, useRecoilState, RecoilRoot, atomFamily } from 'recoil'
-import recoilPersist from '../../index'
+import { recoilPersist } from '../../index'
 
 const { RecoilPersist, updateState } = recoilPersist(['count', 'count3'])
 
