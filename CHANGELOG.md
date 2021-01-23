@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0
+
+- Adding typescript type definition. Thanks https://github.com/bluelovers
+
 ## 1.0.0
 
 - Add dual publishing for commonjs and esm
