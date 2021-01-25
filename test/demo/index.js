@@ -1,32 +1,26 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { atom, useRecoilState, RecoilRoot, atomFamily } from 'recoil'
+import { atom, atomFamily, RecoilRoot, useRecoilState } from 'recoil'
 import { recoilPersist } from '../../index'
 
-const { RecoilPersist, updateState } = recoilPersist(['count', 'count3'])
+const { persistStateEffect, updateState } = recoilPersist(['count', 'count3'])
 
 const counterState = atom({
   key: 'count',
   default: 0,
-  persistence_UNSTABLE: {
-    type: 'log',
-  },
+  effects_UNSTABLE: [persistStateEffect],
 })
 
 const counterState2 = atom({
   key: 'count2',
   default: 0,
-  persistence_UNSTABLE: {
-    type: 'log',
-  },
+  effects_UNSTABLE: [persistStateEffect],
 })
 
 const counterFamily = atomFamily({
   key: 'count3',
   default: 0,
-  persistence_UNSTABLE: {
-    type: 'log',
-  },
+  effects_UNSTABLE: [persistStateEffect],
 })
 
 export default function App() {
