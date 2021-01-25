@@ -1,5 +1,3 @@
-const { useTransactionObservation_UNSTABLE } = require('recoil')
-
 /**
  * Recoil module to persist state to passed storage (it use localStorage by default)
  *
@@ -13,41 +11,54 @@ const { useTransactionObservation_UNSTABLE } = require('recoil')
  */
 function recoilPersist(paths = [], config = {}) {
   if (typeof window === 'undefined') {
-    return { RecoilPersist: () => null, updateState: () => {} }
+    return {
+      RecoilPersist: () => null,
+      updateState: () => {},
+    }
   }
 
   const key = config.key || 'recoil-persist'
   const storage = config.storage || localStorage
 
-  function RecoilPersist() {
-    useTransactionObservation_UNSTABLE(persistState)
-    return null
+  function persistStateEffect({ onSet, node }) {
+    const name = node.key
+    if (paths.includes(name)) {
+      onSet(persistState(name))
+    }
   }
 
-  function persistState(event) {
-    const toStore = {}
-    event.atomValues.forEach((value, atomName) => {
-      const name = atomName.split('__')[0]
-      if (paths.length === 0 || paths.includes(name)) {
-        toStore[name] = value
-      }
-    })
+  function setState(state) {
     try {
-      storage.setItem(key, JSON.stringify(toStore))
+      storage.setItem(key, JSON.stringify(state))
     } catch (e) {
       console.error(e)
+    }
+  }
+
+  function persistState(name) {
+    let state = getState()
+    if (state === null) {
+      return () => {}
+    }
+
+    return (newValue) => {
+      state[name] = newValue
+      setState(state)
+    }
+  }
+
+  function getState() {
+    const toParse = storage.getItem(key)
+    try {
+      return JSON.parse(toParse) || {}
+    } catch (e) {
+      console.error(e)
+      return null
     }
   }
 
   function updateState({ set }) {
-    const toParse = storage.getItem(key)
-    let state
-    try {
-      state = JSON.parse(toParse)
-    } catch (e) {
-      console.error(e)
-      return
-    }
+    let state = getState()
     if (state === null) {
       return
     }
@@ -62,7 +73,7 @@ function recoilPersist(paths = [], config = {}) {
     })
   }
 
-  return { RecoilPersist, updateState }
+  return { updateState, persistStateEffect }
 }
 
 module.exports = { recoilPersist }
