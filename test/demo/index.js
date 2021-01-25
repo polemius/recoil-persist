@@ -32,7 +32,8 @@ const counterFamily = atomFamily({
 export default function App() {
   const [count, setCount] = useRecoilState(counterState)
   const [count2, setCount2] = useRecoilState(counterState2)
-  const [count3, setCount3] = useRecoilState(counterFamily('key'))
+  const [count3, setCount3] = useRecoilState(counterFamily('3'))
+  const [count4, setCount4] = useRecoilState(counterFamily('4'))
   return (
     <div className="App">
       <h3>Counter 1 (persist): {count}</h3>
@@ -44,6 +45,9 @@ export default function App() {
       <h3>Counter 3 (persist, atomFamily): {count3}</h3>
       <button onClick={() => setCount3(count3 + 1)}>Increase</button>
       <button onClick={() => setCount3(count3 - 1)}>Decrease</button>
+      <h3>Counter 4 (persist, atomFamily): {count4}</h3>
+      <button onClick={() => setCount4(count4 + 1)}>Increase</button>
+      <button onClick={() => setCount4(count4 - 1)}>Decrease</button>
     </div>
   )
 }
