@@ -44,8 +44,7 @@ export default function App() {
 
 var mountNode = document.getElementById('app')
 ReactDOM.render(
-  <RecoilRoot initializeState={({ set }) => updateState({ set })}>
-    <RecoilPersist />
+  <RecoilRoot initializeState={updateState}>
     <App />
   </RecoilRoot>,
   mountNode,
