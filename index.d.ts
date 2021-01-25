@@ -1,4 +1,5 @@
 import { MutableSnapshot } from 'recoil'
+import { FunctionComponent } from 'react'
 
 interface IPersistConfig {
   // The default key to use in local storage
@@ -22,9 +23,9 @@ interface IPersistConfig {
  *    `localStorage`. Defaults value is `localStorage`.
  */
 export declare function recoilPersist(
-  paths: string = [],
-  config: IPersistConfig = {},
+  paths?: string[],
+  config?: IPersistConfig,
 ): {
-  RecoilPersist: () => null
+  RecoilPersist: FunctionComponent
   updateState: (params: MutableSnapshot) => void
 }
