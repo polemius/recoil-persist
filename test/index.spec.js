@@ -135,7 +135,7 @@ it('should read state from localStorage', async () => {
   expect(getByTestId('count3-value').innerHTML).toBe('1')
 })
 
-it('should hande non jsonable object in localStorage', async () => {
+it('should handle non jsonable object in localStorage', async () => {
   localStorage.setItem('recoil-persist', 'test string')
 
   const { getByTestId } = render(
@@ -165,7 +165,7 @@ it('should handle non jsonable object in state', async () => {
   expect(mock).toHaveBeenCalledTimes(1)
 })
 
-it('should  handle non existing atom name stored in storage', async () => {
+it('should handle non existing atom name stored in storage', async () => {
   localStorage.setItem(
     'recoil-persist',
     JSON.stringify({
