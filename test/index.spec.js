@@ -47,10 +47,13 @@ function Demo() {
   )
 }
 
+console.error = jest.fn()
+
 afterEach(() => {
   localStorage.clear()
   sessionStorage.clear()
   jest.restoreAllMocks()
+  console.error.mockClear()
 })
 
 it('should update localStorage', async () => {
@@ -181,6 +184,7 @@ it('should handle non jsonable object in state', async () => {
   fireEvent.click(getByText('Increase'))
   await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
   expect(mock).toHaveBeenCalledTimes(1)
+  expect(console.error).toHaveBeenCalledTimes(1)
 })
 
 it('should handle non existing atom name stored in storage', async () => {
