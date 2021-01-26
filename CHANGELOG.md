@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0
+
+- Update typescript type definition. Thanks https://github.com/rhys-saldanha
+
 ## 1.1.0
 
 - Adding typescript type definition. Thanks https://github.com/bluelovers
