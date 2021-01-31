@@ -1,50 +1,53 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { atom, atomFamily, RecoilRoot, useRecoilState } from 'recoil'
-import { recoilPersist } from '../../index'
+import { recoilPersist } from '../../src'
 
-const { persistStateEffect, updateState } = recoilPersist(['count', 'count3'])
+const { persistAtom } = recoilPersist({ key: 'abc1234' })
 
 const counterState = atom({
   key: 'count',
   default: 0,
-  effects_UNSTABLE: [persistStateEffect],
-})
-
-const counterState2 = atom({
-  key: 'count2',
-  default: 0,
-  effects_UNSTABLE: [persistStateEffect],
+  effects_UNSTABLE: [persistAtom],
 })
 
 const counterFamily = atomFamily({
-  key: 'count3',
+  key: 'countFamily',
   default: 0,
-  effects_UNSTABLE: [persistStateEffect],
+  effects_UNSTABLE: [persistAtom],
+})
+
+const counterState4 = atom({
+  key: 'count4',
+  default: 0,
 })
 
 export default function App() {
   const [count, setCount] = useRecoilState(counterState)
-  const [count2, setCount2] = useRecoilState(counterState2)
-  const [count3, setCount3] = useRecoilState(counterFamily('key'))
+  const [count2, setCount2] = useRecoilState(counterFamily('2'))
+  const [count3, setCount3] = useRecoilState(counterFamily('3'))
+  const [count4, setCount4] = useRecoilState(counterState4)
   return (
     <div className="App">
       <h3>Counter 1 (persist): {count}</h3>
       <button onClick={() => setCount(count + 1)}>Increase</button>
       <button onClick={() => setCount(count - 1)}>Decrease</button>
-      <h3>Counter 2 (not persist): {count2}</h3>
+      <h3>Counter 2 (persist, atomFamily): {count2}</h3>
       <button onClick={() => setCount2(count2 + 1)}>Increase</button>
       <button onClick={() => setCount2(count2 - 1)}>Decrease</button>
       <h3>Counter 3 (persist, atomFamily): {count3}</h3>
       <button onClick={() => setCount3(count3 + 1)}>Increase</button>
       <button onClick={() => setCount3(count3 - 1)}>Decrease</button>
+      <h3>Counter 4 (do not persist): {count4}</h3>
+      <button onClick={() => setCount4(count4 + 1)}>Increase</button>
+      <button onClick={() => setCount4(count4 - 1)}>Decrease</button>
     </div>
   )
 }
 
-var mountNode = document.getElementById('app')
+const mountNode = document.getElementById('app')
 ReactDOM.render(
-  <RecoilRoot initializeState={updateState}>
+  <RecoilRoot>
     <App />
   </RecoilRoot>,
   mountNode,
