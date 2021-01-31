@@ -1,6 +1,6 @@
 import { AtomEffect } from 'recoil'
 
-export class PersistConfiguration {
+export interface PersistConfiguration {
   key?: string
   storage?: Storage
 }
