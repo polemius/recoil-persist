@@ -1,7 +1,10 @@
 # Recoil Persist
 
 Tiny module for [recoil](https://recoiljs.org) to store and sync state to
-`Storage`.
+`Storage`. It is only 278  bytes (minified and gzipped). No dependencies.
+[Size Limit] controls the size.
+
+[Size Limit]:  https://github.com/ai/size-limit
 
 ![Example of persist state in localStorage](example.gif)
 
