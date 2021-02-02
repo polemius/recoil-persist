@@ -14,3 +14,10 @@ example.gif
 babel.config.js
 example.mov
 example.png
+
+.eslintrc
+.lintstagedr
+.prettierrc
+.lintstagedrc
+jest.config.js
+tsconfig.json
