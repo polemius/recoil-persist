@@ -1,10 +1,12 @@
 # Recoil Persist
 
 Tiny module for [recoil](https://recoiljs.org) to store and sync state to
-`Storage`. It is only 278  bytes (minified and gzipped). No dependencies.
-[Size Limit] controls the size.
+`Storage`. It is only 278 bytes (minified and gzipped). No dependencies.
+[Size Limit](https://github.com/ai/size-limit) controls the size.
 
-[Size Limit]:  https://github.com/ai/size-limit
+If you are using recoil-persist with version 1.x.x please check
+[migration guide](https://github.com/polemius/recoil-persist#migration-from-version-1xx-to-2xx)
+to version 2.x.x.
 
 ![Example of persist state in localStorage](example.gif)
 
@@ -12,15 +14,31 @@ Tiny module for [recoil](https://recoiljs.org) to store and sync state to
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import { RecoilRoot } from 'recoil'
+import { atom, RecoilRoot, useRecoilState } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
 
-const { RecoilPersist, updateState } = recoilPersist()
+const { persistAtom } = recoilPersist()
+
+const counterState = atom({
+  key: 'count',
+  default: 0,
+  effects_UNSTABLE: [persistAtom],
+})
+
+function App() {
+  const [count, setCount] = useRecoilState(counterState)
+  return (
+    <div>
+      <h3>Counter: {count}</h3>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+      <button onClick={() => setCount(count - 1)}>Decrease</button>
+    </div>
+  )
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <RecoilRoot initializeState={updateState}>
-      <RecoilPersist />
+    <RecoilRoot>
       <App />
     </RecoilRoot>
   </React.StrictMode>,
@@ -31,16 +49,16 @@ ReactDOM.render(
 ## Install
 
 ```
-npm install --save-dev recoil-persist
+npm install recoil-persist
 ```
 
 or
 
 ```
-yarn add --dev recoil-persist
+yarn add recoil-persist
 ```
 
-Now you could add `RecoilPersist` to your app:
+Now you could add persisting a state to your app:
 
 ```diff
 import React from 'react';
@@ -49,79 +67,53 @@ import App from './App';
 import { RecoilRoot } from "recoil";
 +import { recoilPersist } from 'recoil-persist'
 
-+const { RecoilPersist, updateState } = recoilPersist()
++const { persistAtom } = recoilPersist()
+
+const counterState = atom({
+  key: 'count',
+  default: 0,
++ effects_UNSTABLE: [persistAtom],
+})
+
+function App() {
+  const [count, setCount] = useRecoilState(counterState)
+  return (
+    <div>
+      <h3>Counter: {count}</h3>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+      <button onClick={() => setCount(count - 1)}>Decrease</button>
+    </div>
+  )
+}
 
 ReactDOM.render(
   <React.StrictMode>
--   <RecoilRoot>
-+   <RecoilRoot initializeState={updateState}> {/* Pass `updateState` function to recoil */}
-+      <RecoilPersist /> {/* Please add this line inside `RecoilRoot` scope */}
+    <RecoilRoot>
       <App />
     </RecoilRoot>
   </React.StrictMode>,
-  document.getElementById('root')
-);
+  document.getElementById('root'),
+)
 ```
 
-To make it work you need to add `persistence_UNSTABLE` key to atom properties:
-
-```diff
-const counterState = atom({
-  key: "count",
-  default: 0,
-+  persistence_UNSTABLE: {
-+    type: 'count'
-+  },
-});
-```
-
-After this each changes in atoms will be store and sync to `localStorage`.
+After this each changes in atom will be store and sync to `localStorage`.
 
 ## Usage
 
 ```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import { RecoilRoot } from "recoil";
 import { recoilPersist } from 'recoil-persist'
 
-const { RecoilPersist, updateState } = recoilPersist(
-    ['count'], // configurate that atoms will be stored (if empty then all atoms will be stored),
-    {
-        key: 'recoil-persist', // this key is using to store data in local storage
-        storage: localStorage // configurate which stroage will be used to store the data
-    }
-)
-
-ReactDOM.render(
-  <React.StrictMode>
-   <RecoilRoot initializeState={({set}) => {
-       {/* Use `set` for initialize the state */}
-       updateState({set}) {/* If the localStorage has stored state then init state will be overide */}
-    }>
-      <RecoilPersist />
-      <App />
-    </RecoilRoot>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const { persistAtom } = recoilPersist({
+  key: 'recoil-persist', // this key is using to store data in local storage
+  storage: localStorage, // configurate which stroage will be used to store the data
+})
 ```
 
 ![Example of persist state in localStorage](example.png)
 
 ## API
 
-### recoilPersist(paths, config)
-
-#### paths parameter
-
-```js
-type paths = Void | Array<String>
-```
-
-If no value is provided to `paths`, then `recoilPersist` stores everything in
-storage.
+### recoilPersist(config)
 
 #### config parameter
 
@@ -139,10 +131,62 @@ type config.storage = Storage
 Set `config.storage` with `sessionStorage` or other `Storage` implementation to
 change storage target. Otherwise `localStorage` is used (default).
 
-## Notes
+## Migration from version 1.x.x to 2.x.x
 
-This package use unstable hook `useTransactionObservation_UNSTABLE`. As far it
-will be stable the package will be updated with new API.
+The API changed from version 1.x.x.
+
+To update your code just use this migration guide:
+
+```diff
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import { RecoilRoot } from "recoil";
+import { recoilPersist } from 'recoil-persist' // import stay the same
+
+const {
+-  RecoilPersist,
+-  updateState
++  persistAtom
+} = recoilPersist(
+-   ['count'], // no need for specifying atoms keys
+    {
+        key: 'recoil-persist', // configuration stay the same too
+        storage: localStorage
+    }
+)
+
+const counterState = atom({
+  key: 'count',
+  default: 0,
+- persistence_UNSTABLE: { // Please remove persistence_UNSTABLE from atom definition
+-   type: 'log',
+- },
++ effects_UNSTABLE: [persistAtom], // Please add effects_UNSTABLE key to atom definition
+})
+
+function App() {
+  const [count, setCount] = useRecoilState(counterState)
+  return (
+    <div>
+      <h3>Counter: {count}</h3>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+      <button onClick={() => setCount(count - 1)}>Decrease</button>
+    </div>
+  )
+}
+
+ReactDOM.render(
+  <React.StrictMode>
+-   <RecoilRoot initializeState={({set}) => updateState({set})>
++   <RecoilRoot> // Please remove updateState function from initiallizeState
+-     <RecoilPersist /> // and also remove RecoilPersist component
+      <App />
+    </RecoilRoot>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
 
 ## Demo
 

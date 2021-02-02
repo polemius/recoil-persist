@@ -12,23 +12,20 @@ export interface PersistConfiguration {
  * @param config.key Used as key in local storage, defaults to `recoil-persist`
  * @param config.storage Local storage to use, defaults to `localStorage`
  */
-export const recoilPersist = (config: PersistConfiguration = {}): { persistAtom: AtomEffect<any> } => {
-  const {
-    key = 'recoil-persist',
-    storage = localStorage,
-  } = config
+export const recoilPersist = (
+  config: PersistConfiguration = {},
+): { persistAtom: AtomEffect<any> } => {
+  const { key = 'recoil-persist', storage = localStorage } = config
 
   if (typeof window === 'undefined') {
     return {
-      persistAtom: () => {
-      },
+      persistAtom: () => {},
     }
   }
 
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
-      if (containsKey(node.key))
-        setSelf(retrieveValue(node.key))
+      if (containsKey(node.key)) setSelf(retrieveValue(node.key))
     }
     onSet(persistValue(node.key))
   }
