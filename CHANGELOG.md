@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+
+- Rewring library to TypeScript with using `effects_UNSTABLE`. Huge thanks
+  https://github.com/rhys-saldanha
+
 ## 1.2.0
 
 - Update typescript type definition. Thanks https://github.com/rhys-saldanha
