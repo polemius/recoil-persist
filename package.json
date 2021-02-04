@@ -1,6 +1,6 @@
 {
   "name": "recoil-persist",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Package for recoil to persist and rehydrate store",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -53,8 +53,8 @@
   },
   "size-limit": [
     {
-      "path": "src/index.js",
-      "limit": "278 B"
+      "path": "dist/index.js",
+      "limit": "311 B"
     }
   ],
   "jest": {

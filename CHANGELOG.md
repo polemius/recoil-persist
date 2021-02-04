@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.0
+
+- Handle async storage
+
 ## 2.0.0
 
 - Rewring library to TypeScript with using `effects_UNSTABLE`. Huge thanks
