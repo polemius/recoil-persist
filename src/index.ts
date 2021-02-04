@@ -1,5 +1,10 @@
 import { AtomEffect } from 'recoil'
 
+interface Storage {
+  setItem(key: string, value: string): void | Promise<any>
+  getItem(key: string): null | string | Promise<any>
+}
+
 export interface PersistConfiguration {
   key?: string
   storage?: Storage
@@ -25,37 +30,46 @@ export const recoilPersist = (
 
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
-      if (containsKey(node.key)) setSelf(retrieveValue(node.key))
+      const state = getState()
+      if (typeof state.then === 'function') {
+        state.then((s) => {
+          if (s.hasOwnProperty(node.key)) {
+            setSelf(s[node.key])
+          }
+        })
+      }
+      if (state.hasOwnProperty(node.key)) {
+        setSelf(state[node.key])
+      }
     }
-    onSet(persistValue(node.key))
-  }
 
-  const containsKey = (key: string): boolean => {
-    const state = getState()
-    return state.hasOwnProperty(key)
-  }
-
-  const retrieveValue = (key: string): any => {
-    const state = getState()
-    return state[key]
-  }
-
-  const persistValue = (name: string) => (newValue: any): void => {
-    let state = getState()
-    state[name] = newValue
-    setState(state)
+    onSet((newValue) => {
+      const state = getState()
+      state[node.key] = newValue
+      setState(state)
+    })
   }
 
   const getState = (): any => {
     const toParse = storage.getItem(key)
-    if (toParse) {
-      try {
-        return JSON.parse(toParse)
-      } catch (e) {
-        console.error(e)
-        return {}
-      }
-    } else {
+    if (toParse === null || toParse === undefined) {
+      return {}
+    }
+    if (typeof toParse === 'string') {
+      return parseState(toParse)
+    }
+    if (typeof toParse.then === 'function') {
+      return toParse.then(parseState)
+    }
+
+    return {}
+  }
+
+  const parseState = (state: string) => {
+    try {
+      return JSON.parse(state)
+    } catch (e) {
+      console.error(e)
       return {}
     }
   }

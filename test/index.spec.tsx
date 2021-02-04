@@ -29,14 +29,31 @@ function Demo() {
   const [count4, setCount4] = useRecoilState(counterState4)
   return (
     <div>
-      <p data-testid='count-value'>{count}</p>
-      <p data-testid='count2-value'>{count2}</p>
-      <p data-testid='count3-value'>{count3}</p>
-      <p data-testid='count4-value'>{count4}</p>
-      <button data-testid='count-increase' onClick={() => setCount(count + 1)}>Increase</button>
-      <button data-testid='count2-increase' onClick={() => setCount2(count2 + 1)}>Increase 2</button>
-      <button data-testid='count3-increase' onClick={() => setCount3(count3 + 1)}>Increase 3</button>
-      <button data-testid='count4-increase' onClick={() => setCount4(count4 + 1)}>Increase 4</button>
+      <p data-testid="count-value">{count}</p>
+      <p data-testid="count2-value">{count2}</p>
+      <p data-testid="count3-value">{count3}</p>
+      <p data-testid="count4-value">{count4}</p>
+      <button data-testid="count-increase" onClick={() => setCount(count + 1)}>
+        Increase
+      </button>
+      <button
+        data-testid="count2-increase"
+        onClick={() => setCount2(count2 + 1)}
+      >
+        Increase 2
+      </button>
+      <button
+        data-testid="count3-increase"
+        onClick={() => setCount3(count3 + 1)}
+      >
+        Increase 3
+      </button>
+      <button
+        data-testid="count4-increase"
+        onClick={() => setCount4(count4 + 1)}
+      >
+        Increase 4
+      </button>
     </div>
   )
 }
@@ -44,11 +61,57 @@ function Demo() {
 const error = jest.fn()
 console.error = error
 
+const asyncStorage = () => {
+  let s = {}
+  return {
+    setItem: (key: string, value: string) => {
+      return new Promise((resolve) => {
+        s[key] = value
+        resolve(value)
+      })
+    },
+    getItem: (key: string): Promise<string> => {
+      return new Promise((resolve) => {
+        resolve(s[key])
+      })
+    },
+    clear: () => {
+      s = {}
+    },
+  }
+}
+
+const storage = asyncStorage()
+
+const { persistAtom: persistAtomAsync } = recoilPersist({
+  storage,
+})
+
+const counterStateAsync = atom({
+  key: 'count_async',
+  default: 0,
+  effects_UNSTABLE: [persistAtomAsync],
+})
+
+function DemoAsync() {
+  const [count, setCount] = useRecoilState(counterStateAsync)
+
+  return (
+    <div>
+      <p data-testid="count-value">{count}</p>
+      <button data-testid="count-increase" onClick={() => setCount(count + 1)}>
+        Increase
+      </button>
+    </div>
+  )
+}
+
 afterEach(() => {
   localStorage.clear()
   sessionStorage.clear()
   jest.restoreAllMocks()
   error.mockClear()
+  storage.clear()
 })
 
 it('should update localStorage', async () => {
@@ -169,4 +232,32 @@ it('should handle non-existent atom name stored in storage', async () => {
   )
 
   await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('0'))
+})
+
+it('should handle store if it return Promise', async () => {
+  const { getByTestId } = render(
+    <RecoilRoot>
+      <DemoAsync />
+    </RecoilRoot>,
+  )
+
+  fireEvent.click(getByTestId('count-increase'))
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+  const value = await storage.getItem('recoil-persist')
+
+  expect(JSON.parse(value)).toStrictEqual({
+    count_async: 1,
+  })
+})
+
+it('should read state from async storage', async () => {
+  await storage.setItem('recoil-persist', JSON.stringify({ count_async: 10 }))
+
+  const { getByTestId } = render(
+    <RecoilRoot>
+      <DemoAsync />
+    </RecoilRoot>,
+  )
+
+  await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('10'))
 })
