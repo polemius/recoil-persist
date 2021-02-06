@@ -1,13 +1,14 @@
 import { AtomEffect } from 'recoil'
 
-interface Storage {
-  setItem(key: string, value: string): void | Promise<any>
-  getItem(key: string): null | string | Promise<any>
+export interface PersistStorage {
+  setItem(key: string, value: string): void | Promise<void>
+
+  getItem(key: string): null | string | Promise<string>
 }
 
 export interface PersistConfiguration {
   key?: string
-  storage?: Storage
+  storage?: PersistStorage
 }
 
 /**
@@ -24,7 +25,8 @@ export const recoilPersist = (
 
   if (typeof window === 'undefined') {
     return {
-      persistAtom: () => {},
+      persistAtom: () => {
+      },
     }
   }
 
@@ -76,6 +78,8 @@ export const recoilPersist = (
 
   const setState = (state: any): void => {
     try {
+      //TODO for React Native `AsyncStorage`, we should be using `mergeItem`
+      // to merge existing stringified object with new one
       storage.setItem(key, JSON.stringify(state))
     } catch (e) {
       console.error(e)
