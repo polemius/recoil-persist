@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.0
+
+- Fix throwing error with no localStorag
+
 ## 2.1.0
 
 - Handle async storage
