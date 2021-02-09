@@ -21,14 +21,13 @@ export interface PersistConfiguration {
 export const recoilPersist = (
   config: PersistConfiguration = {},
 ): { persistAtom: AtomEffect<any> } => {
-  const { key = 'recoil-persist', storage = localStorage } = config
-
   if (typeof window === 'undefined') {
     return {
-      persistAtom: () => {
-      },
+      persistAtom: () => {},
     }
   }
+
+  const { key = 'recoil-persist', storage = localStorage } = config
 
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
