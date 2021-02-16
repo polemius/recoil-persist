@@ -46,7 +46,13 @@ export const recoilPersist = (
 
     onSet((newValue) => {
       const state = getState()
-      state[node.key] = newValue
+     
+      if (newValue instanceof DefaultValue) {
+        if(state.hasOwnProperty(node.key)) delete state[node.key];
+      } else {
+        state[node.key] = newValue
+      }
+      
       setState(state)
     })
   }
