@@ -44,15 +44,14 @@ export const recoilPersist = (
       }
     }
 
-    onSet((newValue) => {
-      const state = getState()
-     
-      if (newValue instanceof DefaultValue) {
-        if(state.hasOwnProperty(node.key)) delete state[node.key];
+    onSet(async (newValue) => {
+      const state = await getState()
+      if (newValue.__tag === 'DefaultValue' && state.hasOwnProperty(node.key)) {
+        delete state[node.key]
       } else {
         state[node.key] = newValue
       }
-      
+
       setState(state)
     })
   }
@@ -73,6 +72,9 @@ export const recoilPersist = (
   }
 
   const parseState = (state: string) => {
+    if (state === undefined) {
+      return {}
+    }
     try {
       return JSON.parse(state)
     } catch (e) {

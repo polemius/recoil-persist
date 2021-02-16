@@ -4,9 +4,9 @@ import { atom, atomFamily, RecoilRoot, useRecoilState } from 'recoil'
 import { PersistStorage, recoilPersist } from '../src'
 
 interface TestableStorage extends PersistStorage {
-  name: string,
+  name: string
 
-  getState(): any,
+  getState(): any
 
   clear(): void
 }
@@ -90,20 +90,32 @@ function testPersistWith(storage: TestableStorage) {
       const [count4, setCount4] = useRecoilState(counterState4)
       return (
         <div>
-          <p data-testid='count-value'>{count}</p>
-          <p data-testid='count2-value'>{count2}</p>
-          <p data-testid='count3-value'>{count3}</p>
-          <p data-testid='count4-value'>{count4}</p>
-          <button data-testid='count-increase' onClick={() => setCount(count + 1)}>
+          <p data-testid="count-value">{count}</p>
+          <p data-testid="count2-value">{count2}</p>
+          <p data-testid="count3-value">{count3}</p>
+          <p data-testid="count4-value">{count4}</p>
+          <button
+            data-testid="count-increase"
+            onClick={() => setCount(count + 1)}
+          >
             Increase
           </button>
-          <button data-testid='count2-increase' onClick={() => setCount2(count2 + 1)}>
+          <button
+            data-testid="count2-increase"
+            onClick={() => setCount2(count2 + 1)}
+          >
             Increase 2
           </button>
-          <button data-testid='count3-increase' onClick={() => setCount3(count3 + 1)}>
+          <button
+            data-testid="count3-increase"
+            onClick={() => setCount3(count3 + 1)}
+          >
             Increase 3
           </button>
-          <button data-testid='count4-increase' onClick={() => setCount4(count4 + 1)}>
+          <button
+            data-testid="count4-increase"
+            onClick={() => setCount4(count4 + 1)}
+          >
             Increase 4
           </button>
         </div>
@@ -127,7 +139,9 @@ function testPersistWith(storage: TestableStorage) {
       )
 
       fireEvent.click(getByTestId('count-increase'))
-      await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('1'),
+      )
 
       expect(getStateValue()).toStrictEqual({
         [getAtomKey('count')]: 1,
@@ -141,9 +155,13 @@ function testPersistWith(storage: TestableStorage) {
         </RecoilRoot>,
       )
       fireEvent.click(getByTestId('count2-increase'))
+      await waitFor(() =>
+        expect(getByTestId('count2-value').innerHTML).toBe('1'),
+      )
       fireEvent.click(getByTestId('count3-increase'))
-      await waitFor(() => expect(getByTestId('count2-value').innerHTML).toBe('1'))
-      await waitFor(() => expect(getByTestId('count3-value').innerHTML).toBe('1'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe('1'),
+      )
 
       expect(getStateValue()).toStrictEqual({
         [getAtomKey('countFamily__"2"')]: 1,
@@ -159,7 +177,9 @@ function testPersistWith(storage: TestableStorage) {
       )
 
       fireEvent.click(getByTestId('count4-increase'))
-      await waitFor(() => expect(getByTestId('count4-value').innerHTML).toBe('1'))
+      await waitFor(() =>
+        expect(getByTestId('count4-value').innerHTML).toBe('1'),
+      )
 
       expect(storage.getState()[testKey]).toBeUndefined()
     })
@@ -167,7 +187,10 @@ function testPersistWith(storage: TestableStorage) {
     it('should read state from storage', async () => {
       await storage.setItem(
         testKey,
-        JSON.stringify({ [getAtomKey('count')]: 1, [getAtomKey('countFamily__"2"')]: 1 }),
+        JSON.stringify({
+          [getAtomKey('count')]: 1,
+          [getAtomKey('countFamily__"2"')]: 1,
+        }),
       )
 
       const { getByTestId } = render(
@@ -176,8 +199,12 @@ function testPersistWith(storage: TestableStorage) {
         </RecoilRoot>,
       )
 
-      expect(getByTestId('count-value').innerHTML).toBe('1')
-      expect(getByTestId('count2-value').innerHTML).toBe('1')
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('1'),
+      )
+      await waitFor(() =>
+        expect(getByTestId('count2-value').innerHTML).toBe('1'),
+      )
     })
 
     it('should use default value if not in storage', async () => {
@@ -200,7 +227,9 @@ function testPersistWith(storage: TestableStorage) {
       )
 
       fireEvent.click(getByTestId('count-increase'))
-      await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('1'),
+      )
 
       expect(getStateValue()).toStrictEqual({
         [getAtomKey('count')]: 1,
@@ -219,7 +248,9 @@ function testPersistWith(storage: TestableStorage) {
       )
 
       fireEvent.click(getByTestId('count-increase'))
-      await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('1'))
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('1'),
+      )
       expect(mock).toHaveBeenCalledTimes(1)
       expect(console.error).toHaveBeenCalledTimes(1)
     })
@@ -238,7 +269,9 @@ function testPersistWith(storage: TestableStorage) {
         </RecoilRoot>,
       )
 
-      await waitFor(() => expect(getByTestId('count-value').innerHTML).toBe('0'))
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('0'),
+      )
     })
   })
 }
