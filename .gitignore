@@ -8,3 +8,5 @@ test/demo/dist/
 *.mov
 
 dist/
+
+.cache/

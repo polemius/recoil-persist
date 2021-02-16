@@ -4,6 +4,8 @@ Tiny module for [recoil](https://recoiljs.org) to store and sync state to
 `Storage`. It is only 332 bytes (minified and gzipped). No dependencies.
 [Size Limit](https://github.com/ai/size-limit) controls the size.
 
+[Demo](https://polemius.dev/recoil-persist/)
+
 If you are using recoil-persist with version 1.x.x please check
 [migration guide](https://github.com/polemius/recoil-persist#migration-from-version-1xx-to-2xx)
 to version 2.x.x.
