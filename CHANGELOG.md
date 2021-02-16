@@ -2,9 +2,13 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.3.0
+
+- Remove key on reset. Thanks https://github.com/toddmcbrearty
+
 ## 2.2.0
 
-- Fix throwing error with no localStorag
+- Fix throwing error with no localStorage
 
 ## 2.1.0
 
