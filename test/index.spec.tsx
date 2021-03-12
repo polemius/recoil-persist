@@ -118,6 +118,18 @@ function testPersistWith(storage: TestableStorage) {
           >
             Increase 4
           </button>
+          <button
+            data-testid="count3-null-value"
+            onClick={() => setCount3(null)}
+          >
+            Set value to null 
+          </button>
+          <button
+            data-testid="count3-undefined-value"
+            onClick={() => setCount3(undefined)}
+          >
+            Set value to undefined 
+          </button>
         </div>
       )
     }
@@ -129,6 +141,39 @@ function testPersistWith(storage: TestableStorage) {
     afterEach(() => {
       storage.clear()
       jest.restoreAllMocks()
+    })
+
+    it('should update storage with null', async () => {
+      const { getByTestId } = render(
+        <RecoilRoot>
+          <Demo />
+        </RecoilRoot>,
+      )
+
+      fireEvent.click(getByTestId('count3-null-value'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe(''),
+      )
+
+      expect(getStateValue()).toStrictEqual({
+        [getAtomKey('countFamily__"3"')]: null,
+      })
+    })
+
+    it('should update storage with undefined', async () => {
+      const { getByTestId } = render(
+        <RecoilRoot>
+          <Demo />
+        </RecoilRoot>,
+      )
+
+      fireEvent.click(getByTestId('count3-undefined-value'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe(''),
+      )
+
+      expect(getStateValue()).toStrictEqual({})
+      
     })
 
     it('should update storage', async () => {
