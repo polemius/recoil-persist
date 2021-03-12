@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.4.0
+
+- Fix updating the storage with null and undefined value
+
 ## 2.3.0
 
 - Remove key on reset. Thanks https://github.com/toddmcbrearty
