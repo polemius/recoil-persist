@@ -1,6 +1,12 @@
 import React from 'react'
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import { atom, atomFamily, RecoilRoot, useRecoilState } from 'recoil'
+import {
+  atom,
+  atomFamily,
+  RecoilRoot,
+  useRecoilState,
+  useResetRecoilState,
+} from 'recoil'
 import { PersistStorage, recoilPersist } from '../src'
 
 interface TestableStorage extends PersistStorage {
@@ -88,6 +94,7 @@ function testPersistWith(storage: TestableStorage) {
       const [count2, setCount2] = useRecoilState(counterFamily('2'))
       const [count3, setCount3] = useRecoilState(counterFamily('3'))
       const [count4, setCount4] = useRecoilState(counterState4)
+      const resetCounter3 = useResetRecoilState(counterFamily('3'))
       return (
         <div>
           <p data-testid="count-value">{count}</p>
@@ -122,13 +129,16 @@ function testPersistWith(storage: TestableStorage) {
             data-testid="count3-null-value"
             onClick={() => setCount3(null)}
           >
-            Set value to null 
+            Set value to null
           </button>
           <button
             data-testid="count3-undefined-value"
             onClick={() => setCount3(undefined)}
           >
-            Set value to undefined 
+            Set value to undefined
+          </button>
+          <button data-testid="count3-reset" onClick={() => resetCounter3()}>
+            Reset count 3
           </button>
         </div>
       )
@@ -141,6 +151,30 @@ function testPersistWith(storage: TestableStorage) {
     afterEach(() => {
       storage.clear()
       jest.restoreAllMocks()
+    })
+
+    it('should remove key from storage if reset', async () => {
+      const { getByTestId } = render(
+        <RecoilRoot>
+          <Demo />
+        </RecoilRoot>,
+      )
+
+      fireEvent.click(getByTestId('count3-increase'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe('1'),
+      )
+
+      expect(getStateValue()).toStrictEqual({
+        [getAtomKey('countFamily__"3"')]: 1,
+      })
+
+      fireEvent.click(getByTestId('count3-reset'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe('0'),
+      )
+
+      expect(getStateValue()).toStrictEqual({})
     })
 
     it('should update storage with null', async () => {
@@ -173,7 +207,6 @@ function testPersistWith(storage: TestableStorage) {
       )
 
       expect(getStateValue()).toStrictEqual({})
-      
     })
 
     it('should update storage', async () => {

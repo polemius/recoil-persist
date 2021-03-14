@@ -1,4 +1,4 @@
-import { AtomEffect } from 'recoil'
+import { AtomEffect, DefaultValue } from 'recoil'
 
 export interface PersistStorage {
   setItem(key: string, value: string): void | Promise<void>
@@ -46,7 +46,12 @@ export const recoilPersist = (
 
     onSet(async (newValue) => {
       const state = await getState()
-      if (newValue !== null && newValue !== undefined && newValue.__tag === 'DefaultValue' && state.hasOwnProperty(node.key)) {
+      if (
+        newValue !== null &&
+        newValue !== undefined &&
+        newValue instanceof DefaultValue &&
+        state.hasOwnProperty(node.key)
+      ) {
         delete state[node.key]
       } else {
         state[node.key] = newValue
