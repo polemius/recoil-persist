@@ -33,7 +33,7 @@ export const recoilPersist = (
     if (trigger === 'get') {
       const state = getState()
       if (typeof state.then === 'function') {
-        state.then((s) => {
+        state.then((s: any) => {
           if (s.hasOwnProperty(node.key)) {
             setSelf(s[node.key])
           }
@@ -49,10 +49,9 @@ export const recoilPersist = (
       if (
         newValue !== null &&
         newValue !== undefined &&
-        newValue instanceof DefaultValue &&
-        state.hasOwnProperty(node.key)
+        newValue instanceof DefaultValue
       ) {
-        delete state[node.key]
+        if (state.hasOwnProperty(node.key)) delete state[node.key]
       } else {
         state[node.key] = newValue
       }
