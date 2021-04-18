@@ -44,8 +44,8 @@ export const recoilPersist = (
       }
     }
 
-    onSet(async (newValue) => {
-      const state = await getState()
+    onSet((newValue) => {
+      const state = getState()
       if (
         newValue !== null &&
         newValue !== undefined &&
