@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.9.0
+
+- Use merge item if storage has this function
+
 ## 2.8.0
 
 - Update peer peer dependencies
