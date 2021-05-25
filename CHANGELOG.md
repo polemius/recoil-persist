@@ -2,7 +2,7 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.6.0
+## 2.7.0 (2.6.0)
 
 - Fix updating multiple atoms from recoil callback hook
 
