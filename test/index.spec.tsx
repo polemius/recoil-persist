@@ -4,6 +4,7 @@ import {
   atom,
   atomFamily,
   RecoilRoot,
+  useRecoilCallback,
   useRecoilState,
   useResetRecoilState,
 } from 'recoil'
@@ -95,6 +96,10 @@ function testPersistWith(storage: TestableStorage) {
       const [count3, setCount3] = useRecoilState(counterFamily('3'))
       const [count4, setCount4] = useRecoilState(counterState4)
       const resetCounter3 = useResetRecoilState(counterFamily('3'))
+      const updateMultiple = useRecoilCallback(({ set }) => () => {
+        set(counterState, 10)
+        set(counterFamily('2'), 10)
+      })
       return (
         <div>
           <p data-testid="count-value">{count}</p>
@@ -139,6 +144,12 @@ function testPersistWith(storage: TestableStorage) {
           </button>
           <button data-testid="count3-reset" onClick={() => resetCounter3()}>
             Reset count 3
+          </button>
+          <button
+            data-testid="update-multiple"
+            onClick={() => updateMultiple()}
+          >
+            Update multiple
           </button>
         </div>
       )
@@ -350,6 +361,28 @@ function testPersistWith(storage: TestableStorage) {
       await waitFor(() =>
         expect(getByTestId('count-value').innerHTML).toBe('0'),
       )
+    })
+
+    it.skip('should handle updating multiple atomes', async () => {
+      const { getByTestId } = render(
+        <RecoilRoot>
+          <Demo />
+        </RecoilRoot>,
+      )
+
+      fireEvent.click(getByTestId('update-multiple'))
+      await waitFor(() =>
+        expect(getByTestId('count-value').innerHTML).toBe('10'),
+      )
+
+      await waitFor(() =>
+        expect(getByTestId('count2-value').innerHTML).toBe('10'),
+      )
+
+      expect(getStateValue()).toStrictEqual({
+        [getAtomKey('count')]: 10,
+        [getAtomKey('countFamily__"2"')]: 10,
+      })
     })
   })
 }

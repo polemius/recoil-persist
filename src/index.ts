@@ -45,20 +45,28 @@ export const recoilPersist = (
     }
 
     onSet(async (newValue) => {
-      const state = await getState()
-      if (
-        newValue !== null &&
-        newValue !== undefined &&
-        newValue instanceof DefaultValue &&
-        state.hasOwnProperty(node.key)
-      ) {
-        delete state[node.key]
+      const state = getState()
+      if (typeof state.then === 'function') {
+        state.then((s: any) => updateState(newValue, s, node.key))
       } else {
-        state[node.key] = newValue
+        updateState(newValue, state, node.key)
       }
-
-      setState(state)
     })
+  }
+
+  const updateState = (newValue: any, state: any, key: string) => {
+    if (
+      newValue !== null &&
+      newValue !== undefined &&
+      newValue instanceof DefaultValue &&
+      state.hasOwnProperty(key)
+    ) {
+      delete state[key]
+    } else {
+      state[key] = newValue
+    }
+
+    setState(state)
   }
 
   const getState = (): any => {
