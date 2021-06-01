@@ -27,6 +27,7 @@ export default function App() {
   const [count2, setCount2] = useRecoilState(counterFamily('2'))
   const [count3, setCount3] = useRecoilState(counterFamily('3'))
   const [count4, setCount4] = useRecoilState(counterState4)
+
   return (
     <div className="App">
       <h3>Counter 1 (persist): {count}</h3>
@@ -41,6 +42,16 @@ export default function App() {
       <h3>Counter 4 (do not persist): {count4}</h3>
       <button onClick={() => setCount4(count4 + 1)}>Increase</button>
       <button onClick={() => setCount4(count4 - 1)}>Decrease</button>
+      <br />
+      <br />
+      <button
+        onClick={() => {
+          setCount(10)
+          setCount2(11)
+        }}
+      >
+        Set multiple
+      </button>
     </div>
   )
 }
