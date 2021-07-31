@@ -164,8 +164,8 @@ function testPersistWith(storage: TestableStorage) {
       jest.restoreAllMocks()
     })
 
-    it('should remove key from storage if reset', async () => {
-      const { getByTestId } = render(
+    it('should be defaul value if reset', async () => {
+      const { getByTestId, debug } = render(
         <RecoilRoot>
           <Demo />
         </RecoilRoot>,
@@ -185,7 +185,9 @@ function testPersistWith(storage: TestableStorage) {
         expect(getByTestId('count3-value').innerHTML).toBe('0'),
       )
 
-      expect(getStateValue()).toStrictEqual({})
+      expect(getStateValue()).toStrictEqual({
+        [getAtomKey('countFamily__"3"')]: 0,
+      })
     })
 
     it('should update storage with null', async () => {
