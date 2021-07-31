@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.0
+
+- Update recoil to 0.4.0 version
+
 ## 2.9.0
 
 - Use merge item if storage has this function
