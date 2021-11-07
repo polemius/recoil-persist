@@ -1,6 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { atom, atomFamily, RecoilRoot, useRecoilState } from 'recoil'
+import {
+  atom,
+  atomFamily,
+  RecoilRoot,
+  useRecoilState,
+  useResetRecoilState,
+} from 'recoil'
 import { recoilPersist } from '../../src'
 
 const { persistAtom } = recoilPersist({ key: 'abc1234' })
@@ -24,6 +30,7 @@ const counterState4 = atom({
 
 export default function App() {
   const [count, setCount] = useRecoilState(counterState)
+  const resetCounter = useResetRecoilState(counterState)
   const [count2, setCount2] = useRecoilState(counterFamily('2'))
   const [count3, setCount3] = useRecoilState(counterFamily('3'))
   const [count4, setCount4] = useRecoilState(counterState4)
@@ -33,6 +40,7 @@ export default function App() {
       <h3>Counter 1 (persist): {count}</h3>
       <button onClick={() => setCount(count + 1)}>Increase</button>
       <button onClick={() => setCount(count - 1)}>Decrease</button>
+      <button onClick={() => resetCounter()}>Reset</button>
       <h3>Counter 2 (persist, atomFamily): {count2}</h3>
       <button onClick={() => setCount2(count2 + 1)}>Increase</button>
       <button onClick={() => setCount2(count2 - 1)}>Decrease</button>

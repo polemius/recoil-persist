@@ -56,7 +56,7 @@
     "typescript": "^4.1.3"
   },
   "peerDependencies": {
-    "recoil": "^0.4.0"
+    "recoil": "^0.5.1"
   },
   "size-limit": [
     {

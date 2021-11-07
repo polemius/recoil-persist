@@ -66,7 +66,11 @@ function testPersistWith(storage: TestableStorage) {
     const { persistAtom } = recoilPersist({ key: testKey, storage })
 
     const getStateValue = () => {
-      return JSON.parse(storage.getState()[testKey])
+      const value = storage.getState()[testKey]
+      if (value == undefined) {
+        return {}
+      }
+      return JSON.parse(value)
     }
 
     const getAtomKey = (key: string) => {
@@ -164,8 +168,8 @@ function testPersistWith(storage: TestableStorage) {
       jest.restoreAllMocks()
     })
 
-    it('should be defaul value if reset', async () => {
-      const { getByTestId, debug } = render(
+    it('should be removed from storage on reset', async () => {
+      const { getByTestId } = render(
         <RecoilRoot>
           <Demo />
         </RecoilRoot>,
@@ -185,9 +189,22 @@ function testPersistWith(storage: TestableStorage) {
         expect(getByTestId('count3-value').innerHTML).toBe('0'),
       )
 
-      expect(getStateValue()).toStrictEqual({
-        [getAtomKey('countFamily__"3"')]: 0,
-      })
+      expect(getStateValue()).toStrictEqual({})
+    })
+
+    it('should handle reset atom with default value', async () => {
+      const { getByTestId } = render(
+        <RecoilRoot>
+          <Demo />
+        </RecoilRoot>,
+      )
+
+      fireEvent.click(getByTestId('count3-reset'))
+      await waitFor(() =>
+        expect(getByTestId('count3-value').innerHTML).toBe('0'),
+      )
+
+      expect(getStateValue()).toStrictEqual({})
     })
 
     it('should update storage with null', async () => {
