@@ -2,6 +2,11 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.0.0
+
+- Update recoil to 0.5.1 version
+- Update resetting atom logic
+
 ## 3.0.0
 
 - Update recoil to 0.4.0 version
