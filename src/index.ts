@@ -1,14 +1,18 @@
 import { AtomEffect } from 'recoil'
 
+type PersistItemValue = string | undefined | null
+
 export interface PersistStorage {
-  setItem(key: string, value: string): void | Promise<void>
-  mergeItem?(key: string, value: string): Promise<void>
-  getItem(key: string): null | string | Promise<string>
+  setItem(key: string, value: string): any
+  mergeItem?(key: string, value: string): any
+  getItem(key: string): PersistItemValue | Promise<PersistItemValue>
 }
 
+export interface PersistState {}
+
 export interface PersistConfiguration {
-  key?: string
-  storage?: PersistStorage
+  key: string
+  storage: PersistStorage
 }
 
 /**
@@ -19,7 +23,7 @@ export interface PersistConfiguration {
  * @param config.storage Local storage to use, defaults to `localStorage`
  */
 export const recoilPersist = (
-  config: PersistConfiguration = {},
+  config: Partial<PersistConfiguration> = {},
 ): { persistAtom: AtomEffect<any> } => {
   if (typeof window === 'undefined') {
     return {
@@ -27,30 +31,22 @@ export const recoilPersist = (
     }
   }
 
-  const { key = 'recoil-persist', storage = localStorage } = config
+  const {
+    key = 'recoil-persist' as PersistConfiguration['key'],
+    storage = localStorage as PersistConfiguration['storage'],
+  } = config
 
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
-      const state = getState()
-      if (typeof state.then === 'function') {
-        state.then((s) => {
-          if (s.hasOwnProperty(node.key)) {
-            setSelf(s[node.key])
-          }
-        })
-      }
-      if (state.hasOwnProperty(node.key)) {
-        setSelf(state[node.key])
-      }
+      getState().then((s) => {
+        if (s.hasOwnProperty(node.key)) {
+          setSelf(s[node.key])
+        }
+      })
     }
 
     onSet(async (newValue, _, isReset) => {
-      const state = getState()
-      if (typeof state.then === 'function') {
-        state.then((s: any) => updateState(newValue, s, node.key, isReset))
-      } else {
-        updateState(newValue, state, node.key, isReset)
-      }
+      getState().then((s) => updateState(newValue, s, node.key, isReset))
     })
   }
 
@@ -69,22 +65,7 @@ export const recoilPersist = (
     setState(state)
   }
 
-  const getState = (): any => {
-    const toParse = storage.getItem(key)
-    if (toParse === null || toParse === undefined) {
-      return {}
-    }
-    if (typeof toParse === 'string') {
-      return parseState(toParse)
-    }
-    if (typeof toParse.then === 'function') {
-      return toParse.then(parseState)
-    }
-
-    return {}
-  }
-
-  const parseState = (toParse: string) => {
+  const parseState = (toParse: string | null | undefined): PersistState => {
     if (toParse === null || toParse === undefined) {
       return {}
     }
@@ -96,7 +77,10 @@ export const recoilPersist = (
     }
   }
 
-  const setState = (state: any): void => {
+  const getState = (): Promise<PersistState> =>
+    Promise.resolve(storage.getItem(key)).then(parseState)
+
+  const setState = (state: PersistState): void => {
     try {
       if (typeof storage.mergeItem === 'function') {
         storage.mergeItem(key, JSON.stringify(state))
