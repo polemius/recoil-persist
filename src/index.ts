@@ -15,6 +15,12 @@ export interface PersistConfiguration {
   storage: PersistStorage
 }
 
+interface PendingChanges {
+  queue: Promise<any> | null
+  updates: Partial<PersistState>
+  reset: Record<string, boolean>
+}
+
 /**
  * Recoil module to persist state to storage
  *
@@ -36,6 +42,12 @@ export const recoilPersist = (
     storage = localStorage as PersistConfiguration['storage'],
   } = config
 
+  const pendingChanges: PendingChanges = {
+    queue: null,
+    updates: {},
+    reset: {},
+  }
+
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
       getState().then((s) => {
@@ -45,27 +57,35 @@ export const recoilPersist = (
       })
     }
 
-    onSet(async (newValue, _, isReset) => {
-      getState().then((s) => updateState(newValue, s, node.key, isReset))
+    onSet((newValue, _, isReset) => {
+      if (isReset) {
+        pendingChanges.reset[node.key] = true
+        delete pendingChanges.updates[node.key]
+      } else {
+        pendingChanges.updates[node.key] = newValue
+      }
+      if (!pendingChanges.queue) {
+        pendingChanges.queue = getState().then((state) => {
+          updateState(state, pendingChanges)
+          pendingChanges.queue = null
+          pendingChanges.reset = {}
+          pendingChanges.updates = {}
+        })
+      }
     })
   }
 
-  const updateState = (
-    newValue: any,
-    state: any,
-    key: string,
-    isReset: boolean,
-  ) => {
-    if (isReset) {
+  const updateState = (state: PersistState, changes: PendingChanges) => {
+    Object.keys(changes.reset).forEach((key) => {
       delete state[key]
-    } else {
-      state[key] = newValue
-    }
-
+    })
+    Object.keys(changes.updates).forEach((key) => {
+      state[key] = changes.updates[key]
+    })
     setState(state)
   }
 
-  const parseState = (toParse: string | null | undefined): PersistState => {
+  const parseState = (toParse: PersistItemValue): PersistState => {
     if (toParse === null || toParse === undefined) {
       return {}
     }
