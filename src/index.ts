@@ -3,7 +3,7 @@ import { AtomEffect } from 'recoil'
 export interface PersistStorage {
   setItem(key: string, value: string): void | Promise<void>
   mergeItem?(key: string, value: string): Promise<void>
-  getItem(key: string): null | string | Promise<string>
+  getItem(key: string): null | string | Promise<string | null>
 }
 
 export interface PersistConfiguration {
@@ -78,7 +78,7 @@ export const recoilPersist = (
       return parseState(toParse)
     }
     if (typeof toParse.then === 'function') {
-      return toParse.then(parseState)
+      return toParse.then(state => state === null ? '{}' : state).then(parseState)
     }
 
     return {}
