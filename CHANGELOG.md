@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.2.0
+
+- Update recoil to 0.7.2 version
+
 ## 4.1.0
 
 - Update recoil to 0.6.1 version
