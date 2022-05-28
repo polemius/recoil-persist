@@ -108,6 +108,8 @@ import { recoilPersist } from 'recoil-persist'
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist', // this key is using to store data in local storage
   storage: localStorage, // configurate which stroage will be used to store the data
+  stringify: JSON.stringify,
+  parser: JSON.parse,
 })
 ```
 
@@ -133,6 +135,23 @@ type config.storage = Storage
 Set `config.storage` with `sessionStorage` or other `Storage` implementation to
 change storage target. Otherwise `localStorage` is used (default).
 
+
+```js
+type config.stringify = Function
+```
+
+Set `config.stringify` with any method implementation to
+change the saved data. Otherwise `JSON.stringify` is used (default).
+
+
+```js
+type config.parser = Function
+```
+
+Set `config.parser` with any method implementation to
+change/transfer return data. Otherwise `JSON.parse` is used (default).
+
+
 ## Migration from version 1.x.x to 2.x.x
 
 The API changed from version 1.x.x.
@@ -154,7 +173,7 @@ const {
 -   ['count'], // no need for specifying atoms keys
     {
         key: 'recoil-persist', // configuration stay the same too
-        storage: localStorage
+        storage: localStorage,
     }
 )
 
