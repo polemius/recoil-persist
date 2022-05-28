@@ -9,6 +9,8 @@ export interface PersistStorage {
 export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
+  stringify?: (value: any) => any
+  parser?: (value: any) => any
 }
 
 /**
@@ -27,27 +29,34 @@ export const recoilPersist = (
     }
   }
 
-  const { key = 'recoil-persist', storage = localStorage } = config
-
+  const {
+    key = 'recoil-persist',
+    storage = localStorage,
+    stringify = JSON.stringify,
+    parser = JSON.parse,
+  } = config
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
       const state = getState()
       if (typeof state.then === 'function') {
-        state.then((s) => {
-          if (s.hasOwnProperty(node.key)) {
+        state.then((s: any) => {
+          if (s && s.hasOwnProperty(node.key)) {
             setSelf(s[node.key])
           }
         })
       }
+
       if (state.hasOwnProperty(node.key)) {
         setSelf(state[node.key])
       }
     }
 
-    onSet(async (newValue, _, isReset) => {
+    onSet((newValue, _, isReset) => {
       const state = getState()
       if (typeof state.then === 'function') {
-        state.then((s: any) => updateState(newValue, s, node.key, isReset))
+        state.then((s: any) =>
+          updateState(newValue, s ?? {}, node.key, isReset),
+        )
       } else {
         updateState(newValue, state, node.key, isReset)
       }
@@ -89,7 +98,7 @@ export const recoilPersist = (
       return {}
     }
     try {
-      return JSON.parse(state)
+      return parser(state)
     } catch (e) {
       console.error(e)
       return {}
@@ -99,9 +108,9 @@ export const recoilPersist = (
   const setState = (state: any): void => {
     try {
       if (typeof storage.mergeItem === 'function') {
-        storage.mergeItem(key, JSON.stringify(state))
+        storage.mergeItem(key, stringify(state))
       } else {
-        storage.setItem(key, JSON.stringify(state))
+        storage.setItem(key, stringify(state))
       }
     } catch (e) {
       console.error(e)
