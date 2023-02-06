@@ -6,10 +6,15 @@ export interface PersistStorage {
   getItem(key: string): null | string | Promise<string>
 }
 
+export interface StorageEvent {
+  readonly key?: string | null;
+  readonly newValue?: string | null;
+}
+
 export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
-  synchronizeWindows?: boolean
+  addStorageListener?: (listener: (e: StorageEvent) => void) => ReturnType<AtomEffect<any>>
 }
 
 /**
@@ -18,6 +23,9 @@ export interface PersistConfiguration {
  * @param config Optional configuration object
  * @param config.key Used as key in local storage, defaults to `recoil-persist`
  * @param config.storage Local storage to use, defaults to `localStorage`
+ * @param config.addStorageListener Optional method to listen to storage events
+ * enabling external events to trigger application updates
+ * defaults to `localStorage` events synchronizing multiple windows
  */
 export const recoilPersist = (
   config: PersistConfiguration = {},
@@ -31,7 +39,10 @@ export const recoilPersist = (
   const {
     key = 'recoil-persist',
     storage = localStorage,
-    synchronizeWindows = true,
+    addStorageListener = (listener) => {
+      window.addEventListener('storage', listener)
+      return () => window.removeEventListener('storage', listener)
+    },
   } = config
 
   const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf, resetSelf }) => {
@@ -58,8 +69,8 @@ export const recoilPersist = (
       }
     })
 
-    if(synchronizeWindows) {
-      const onStorageEvent = (e: StorageEvent) => {
+    if(addStorageListener) {
+      const removeStorageListener = addStorageListener((e: StorageEvent) => {
         if(e.key == key) {
           const state = parseState(e.newValue)
           if(node.key in state) {
@@ -68,9 +79,8 @@ export const recoilPersist = (
             resetSelf()
           }
         }
-      }
-      window.addEventListener('storage', onStorageEvent)
-      return () => window.removeEventListener('storage', onStorageEvent)
+      });
+      return removeStorageListener;
     }
   }
 
