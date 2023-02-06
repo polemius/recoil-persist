@@ -9,6 +9,7 @@ export interface PersistStorage {
 export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
+  synchronizeWindows?: boolean
 }
 
 /**
@@ -27,9 +28,13 @@ export const recoilPersist = (
     }
   }
 
-  const { key = 'recoil-persist', storage = localStorage } = config
+  const {
+    key = 'recoil-persist',
+    storage = localStorage,
+    synchronizeWindows = true,
+  } = config
 
-  const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
+  const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf, resetSelf }) => {
     if (trigger === 'get') {
       const state = getState()
       if (typeof state.then === 'function') {
@@ -52,6 +57,21 @@ export const recoilPersist = (
         updateState(newValue, state, node.key, isReset)
       }
     })
+
+    if(synchronizeWindows) {
+      const onStorageEvent = (e: StorageEvent) => {
+        if(e.key == key) {
+          const state = parseState(e.newValue)
+          if(node.key in state) {
+            setSelf(state[node.key])
+          } else {
+            resetSelf()
+          }
+        }
+      }
+      window.addEventListener('storage', onStorageEvent)
+      return () => window.removeEventListener('storage', onStorageEvent)
+    }
   }
 
   const updateState = (
@@ -84,8 +104,8 @@ export const recoilPersist = (
     return {}
   }
 
-  const parseState = (state: string) => {
-    if (state === undefined) {
+  const parseState = (state?: string | null) => {
+    if (!state) {
       return {}
     }
     try {
