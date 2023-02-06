@@ -14,7 +14,7 @@ export interface StorageEvent {
 export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
-  addStorageListener?: (listener: (e: StorageEvent) => void) => ReturnType<AtomEffect<any>>
+  addStorageListener?: ((listener: (e: StorageEvent) => void) => ReturnType<AtomEffect<any>>) | null
 }
 
 /**
