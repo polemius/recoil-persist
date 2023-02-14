@@ -3,7 +3,7 @@ import { AtomEffect } from 'recoil'
 export interface PersistStorage {
   setItem(key: string, value: string): void | Promise<void>
   mergeItem?(key: string, value: string): Promise<void>
-  getItem(key: string): null | string | Promise<string>
+  getItem(key: string): null | string | Promise<null | string>
 }
 
 export interface PersistConfiguration {
