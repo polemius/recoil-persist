@@ -113,6 +113,49 @@ const { persistAtom } = recoilPersist({
 
 ![Example of persist state in localStorage](example.png)
 
+## Server Side Rendering
+
+If you are using SSR you could see that error:
+
+```
+Unhandled Runtime Error
+
+Error: Text content does not match server-rendered HTML.
+```
+
+It happens because on server you don't have any storages and react renders component with default value.
+However in browser it is rendering with values from storage.
+To prevent it we need to introduce hook for render with default value for the first time.
+
+```js
+const defaultValue = [{ id: 1 }]
+
+export const recoilTest = atom<{ id: number }[]>({
+  key: "recoilTest",
+  default: defaultValue,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export function useSSR() {
+  const [isInitial, setIsInitial] = useState(true);
+  const [value, setValue] = useRecoilState(recoilTest);
+
+  useEffect(() => {
+    setIsInitial(false);
+  }, []);
+
+  return [isInitial ? defaultValue : value, setValue] as const;
+}
+
+
+export default function Component() {
+  const [text, setText] = useSSR();
+
+  // rest of the code
+}
+```
+
+
 ## API
 
 ### recoilPersist(config)
