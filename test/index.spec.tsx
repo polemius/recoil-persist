@@ -25,7 +25,7 @@ const asyncStorage = (): TestableStorage => {
     setItem: (key: string, value: string) => {
       return new Promise((resolve) => {
         s[key] = value
-        resolve()
+        resolve(undefined)
       })
     },
     getItem: (key: string): Promise<string> => {
@@ -103,7 +103,8 @@ function testPersistWith(storage: TestableStorage) {
       const updateMultiple = useRecoilCallback(({ set }) => () => {
         set(counterState, 10)
         set(counterFamily('2'), 10)
-      })
+      }, []);
+
       return (
         <div>
           <p data-testid="count-value">{count}</p>
@@ -382,7 +383,7 @@ function testPersistWith(storage: TestableStorage) {
       )
     })
 
-    it.skip('should handle updating multiple atomes', async () => {
+    it('should handle updating multiple atoms', async () => {
       const { getByTestId } = render(
         <RecoilRoot>
           <Demo />
