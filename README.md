@@ -108,6 +108,10 @@ import { recoilPersist } from 'recoil-persist'
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist', // this key is using to store data in local storage
   storage: localStorage, // configurate which storage will be used to store the data
+  converter: { // configurate how values will be serialized/deserialized in storage
+    parse: (value) => JSON.parse,
+    stringify: (value) =>  JSON.stringify
+  }
 })
 ```
 
@@ -175,6 +179,22 @@ type config.storage = Storage
 
 Set `config.storage` with `sessionStorage` or other `Storage` implementation to
 change storage target. Otherwise `localStorage` is used (default).
+
+```js
+type config.converter = {
+  stringify: (value: any) => string
+  parse: (value: string) => any
+}
+```
+
+Set `config.converter` to an object which implements both `stringify` and `parse` functions to convert state values to and from strings. One use of this would be to wrap the standard `JSON.stringify` and `JSON.parse` functions, e.g. to insert your own `reviver` and `replacer` functions:
+
+```js
+{
+  parse: (value) => JSON.parse(value, myCustomReviver),
+  stringify: (value) =>  JSON.stringify(value, myCustomReplacer)
+};
+```
 
 ## Migration from version 1.x.x to 2.x.x
 
