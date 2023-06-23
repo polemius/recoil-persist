@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.0.0
+
+- Add functionality to use different converter for values. Huge thanks https://github.com/jedelson-pagerduty
+
 ## 4.2.0
 
 - Update recoil to 0.7.2 version
