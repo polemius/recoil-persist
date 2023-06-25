@@ -1,6 +1,6 @@
 {
   "name": "recoil-persist",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Package for recoil to persist and rehydrate store",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
