@@ -24,9 +24,9 @@ export interface PersistConfiguration {
  * @param config.key Used as key in local storage, defaults to `recoil-persist`
  * @param config.storage Local storage to use, defaults to `localStorage`
  */
-export const recoilPersist = (
+export const recoilPersist = <T = any>(
   config: PersistConfiguration = {},
-): { persistAtom: AtomEffect<any> } => {
+): { persistAtom: AtomEffect<T> } => {
   if (typeof window === 'undefined') {
     return {
       persistAtom: () => {},
@@ -35,7 +35,7 @@ export const recoilPersist = (
 
   const { key = 'recoil-persist', storage = localStorage, converter = JSON } = config
 
-  const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
+  const persistAtom: AtomEffect<T> = ({ onSet, node, trigger, setSelf }) => {
     if (trigger === 'get') {
       const state = getState()
       if (typeof state.then === 'function') {
