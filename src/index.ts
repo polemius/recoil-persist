@@ -11,9 +11,15 @@ export interface PersistConverter {
   parse: (value: string) => any
 }
 
+export interface StorageEvent {
+  readonly key?: string | null;
+  readonly newValue?: string | null;
+}
+
 export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
+  addStorageListener?: ((listener: (e: StorageEvent) => void) => ReturnType<AtomEffect<any>>) | null
   converter?: PersistConverter
 }
 
@@ -23,6 +29,9 @@ export interface PersistConfiguration {
  * @param config Optional configuration object
  * @param config.key Used as key in local storage, defaults to `recoil-persist`
  * @param config.storage Local storage to use, defaults to `localStorage`
+ * @param config.addStorageListener Optional method to listen to storage events
+ * enabling external events to trigger application updates
+ * defaults to `localStorage` events synchronizing multiple windows
  */
 export const recoilPersist = (
   config: PersistConfiguration = {},
@@ -33,9 +42,17 @@ export const recoilPersist = (
     }
   }
 
-  const { key = 'recoil-persist', storage = localStorage, converter = JSON } = config
+  const {
+    key = 'recoil-persist',
+    storage = localStorage,
+    converter = JSON,
+    addStorageListener = (listener) => {
+      window.addEventListener('storage', listener)
+      return () => window.removeEventListener('storage', listener)
+    },
+  } = config
 
-  const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf }) => {
+  const persistAtom: AtomEffect<any> = ({ onSet, node, trigger, setSelf, resetSelf }) => {
     if (trigger === 'get') {
       const state = getState()
       if (typeof state.then === 'function') {
@@ -58,6 +75,20 @@ export const recoilPersist = (
         updateState(newValue, state, node.key, isReset)
       }
     })
+
+    if(addStorageListener) {
+      const removeStorageListener = addStorageListener((e: StorageEvent) => {
+        if(e.key == key) {
+          const state = parseState(e.newValue)
+          if(node.key in state) {
+            setSelf(state[node.key])
+          } else {
+            resetSelf()
+          }
+        }
+      });
+      return removeStorageListener;
+    }
   }
 
   const updateState = (
@@ -90,8 +121,8 @@ export const recoilPersist = (
     return {}
   }
 
-  const parseState = (state: string) => {
-    if (state === undefined) {
+  const parseState = (state?: string | null) => {
+    if (!state) {
       return {}
     }
     try {
