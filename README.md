@@ -107,11 +107,55 @@ import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist', // this key is using to store data in local storage
-  storage: localStorage, // configurate which storage will be used to store the data
+  storage: localStorage, // configure which storage will be used to store the data
+  converter: JSON // configure how values will be serialized/deserialized in storage
 })
 ```
 
 ![Example of persist state in localStorage](example.png)
+
+## Server Side Rendering
+
+If you are using SSR you could see that error:
+
+```
+Unhandled Runtime Error
+
+Error: Text content does not match server-rendered HTML.
+```
+
+It happens because on server you don't have any storages and react renders component with default value.
+However in browser it is rendering with values from storage.
+To prevent it we need to introduce hook for render with default value for the first time.
+
+```js
+const defaultValue = [{ id: 1 }]
+
+export const recoilTest = atom<{ id: number }[]>({
+  key: "recoilTest",
+  default: defaultValue,
+  effects_UNSTABLE: [persistAtom],
+});
+
+export function useSSR() {
+  const [isInitial, setIsInitial] = useState(true);
+  const [value, setValue] = useRecoilState(recoilTest);
+
+  useEffect(() => {
+    setIsInitial(false);
+  }, []);
+
+  return [isInitial ? defaultValue : value, setValue] as const;
+}
+
+
+export default function Component() {
+  const [text, setText] = useSSR();
+
+  // rest of the code
+}
+```
+
 
 ## API
 
@@ -132,6 +176,22 @@ type config.storage = Storage
 
 Set `config.storage` with `sessionStorage` or other `Storage` implementation to
 change storage target. Otherwise `localStorage` is used (default).
+
+```js
+type config.converter = {
+  stringify: (value: any) => string
+  parse: (value: string) => any
+}
+```
+
+Set `config.converter` to an object which implements both `stringify` and `parse` functions to convert state values to and from strings. One use of this would be to wrap the standard `JSON.stringify` and `JSON.parse` functions, e.g. to insert your own `reviver` and `replacer` functions:
+
+```js
+{
+  parse: (value) => JSON.parse(value, myCustomReviver),
+  stringify: (value) =>  JSON.stringify(value, myCustomReplacer)
+};
+```
 
 ## Migration from version 1.x.x to 2.x.x
 

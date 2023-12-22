@@ -3,7 +3,12 @@ import { AtomEffect } from 'recoil'
 export interface PersistStorage {
   setItem(key: string, value: string): void | Promise<void>
   mergeItem?(key: string, value: string): Promise<void>
-  getItem(key: string): null | string | Promise<string>
+  getItem(key: string): null | string | Promise<null | string>
+}
+
+export interface PersistConverter {
+  stringify: (value: any) => string
+  parse: (value: string) => any
 }
 
 export interface StorageEvent {
@@ -15,6 +20,7 @@ export interface PersistConfiguration {
   key?: string
   storage?: PersistStorage
   addStorageListener?: ((listener: (e: StorageEvent) => void) => ReturnType<AtomEffect<any>>) | null
+  converter?: PersistConverter
 }
 
 /**
@@ -39,6 +45,7 @@ export const recoilPersist = (
   const {
     key = 'recoil-persist',
     storage = localStorage,
+    converter = JSON,
     addStorageListener = (listener) => {
       window.addEventListener('storage', listener)
       return () => window.removeEventListener('storage', listener)
@@ -119,7 +126,7 @@ export const recoilPersist = (
       return {}
     }
     try {
-      return JSON.parse(state)
+      return converter.parse(state)
     } catch (e) {
       console.error(e)
       return {}
@@ -129,9 +136,9 @@ export const recoilPersist = (
   const setState = (state: any): void => {
     try {
       if (typeof storage.mergeItem === 'function') {
-        storage.mergeItem(key, JSON.stringify(state))
+        storage.mergeItem(key, converter.stringify(state))
       } else {
-        storage.setItem(key, JSON.stringify(state))
+        storage.setItem(key, converter.stringify(state))
       }
     } catch (e) {
       console.error(e)
